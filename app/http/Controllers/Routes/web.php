@@ -2,6 +2,14 @@
 
   use app\http\Controllers\Admin\AdminHouseController;
 
+  // 認証が必要なルートグループ
+  Route::middleware('auth')->group(function() {
+    Route::get('/reservations', [ReservationController::class, 'index'])->name('reservations.index');
+    Route::get('/houses/{id}/reservations/input', [ReservationController::class, 'input'])->name('reservations.input');
+    Route::get('/houses/{id}/reservations/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
+    // Route::post('/houses/{id}/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+  });
+
   Route::prefix('admin/houses')->group(function () {
     Route::get('/', [AdminHouseController::class, 'index'])->name('admin.houses.index');
     Route::get('/{id}', [AdminHouseController::class, 'show'])->name('admin.houses.show');
@@ -20,8 +28,8 @@
     Route::post('/houses/{houseId}/review/{reviewId}/edit', [ReviewController::class, 'update'])->middleware('auth');
     Route::post('/houses/{houseId}/review/{reviewId}/delete', [ReviewController::class, 'destroy'])->middleware('auth');
     Route::post('/houses/{houseId}/favorite', [FavoriteController::class, 'toggle'])->middleware('auth');
-      });
-}
+    });
+  }
 
 
 
