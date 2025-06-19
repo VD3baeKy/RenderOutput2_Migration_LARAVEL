@@ -10,6 +10,9 @@
     // Route::post('/houses/{id}/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
   });
 
+  // routes/web.php
+  Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews.index');
+
   Route::prefix('admin/houses')->group(function () {
     Route::get('/', [AdminHouseController::class, 'index'])->name('admin.houses.index');
     Route::get('/{id}', [AdminHouseController::class, 'show'])->name('admin.houses.show');
