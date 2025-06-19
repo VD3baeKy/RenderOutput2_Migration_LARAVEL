@@ -7,7 +7,7 @@
   use Illuminate\Database\Eloquent\Factories\HasFactory;
   use Illuminate\Database\Eloquent\Builder;
 
-class User extends Authenticatable{
+  class User extends Authenticatable{
     use HasFactory, Notifiable;
 
     // テーブル名
@@ -76,28 +76,22 @@ class User extends Authenticatable{
     // ========================
     // UserDetailsImpl的メソッド
 
-    // \Illuminate\Contracts\Auth\Authenticatable で必要（実は getAuthPassword でOKだが Java互換で getPassword も用意）
     public function getPassword(){
         return $this->password;
     }
 
-    // Springでの「ユーザー名」→ここではメールアドレス
     public function getUsername(){
         return $this->email;
     }
 
-    // 権限（ロール名）
     public function getAuthorities(){
-        // 単一ロールを前提
         return $this->role ? [$this->role->name] : [];
     }
 
-    // アカウントが有効（enabledで管理）
     public function isEnabled(){
         return (bool)$this->enabled;
     }
 
-    // アカウント期限切れ・ロック・資格期限切れの判定（デフォルトtrue、将来変えたければ拡張）
     public function isAccountNonExpired(){
         return true;
     }
@@ -113,7 +107,35 @@ class User extends Authenticatable{
     }
 
     // ========================
-    // 予約やレビュー等のリレーションも追加OK
+    // UserDetailsImplDummy的メソッド
+    /**
+     * ダミーユーザー（認証失敗時など）の静的生成
+     */
+    public static function dummy(){
+        $user = new static();
+        $user->id = -1;
+        $user->email = '';
+        $user->furigana = '';
+        $user->name = '';
+        $user->password = null;
+        $user->address = '';
+        $user->created_at = null;
+        $user->enabled = true;
+        $user->phone_number = null;
+        $user->postal_code = null;
+        $user->updated_at = null;
+        $user->role_id = null;
+        // $user->setRelation('role', null); // 明示的にnullにしたい場合
+
+        return $user;
+    }
+
+    public function isDummy(){
+        return $this->id === -1;
+    }
+
+    // ========================
+    // 必要なら予約やレビュー等のリレーション追加もここにOK
     // public function reservations()
     // {
     //     return $this->hasMany(Reservation::class);
