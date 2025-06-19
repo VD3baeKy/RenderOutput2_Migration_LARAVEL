@@ -1,5 +1,5 @@
 <?php
-// app/Http/Requests/ReviewDto.php
+// app/Dto/ReviewDto.php
   namespace app\http\Requests;
 
   use Illuminate\Foundation\Http\FormRequest;
