@@ -1,4 +1,4 @@
-<?
+<?php
     namespace app\http\Controllers;
 
     use app\Models\House;
