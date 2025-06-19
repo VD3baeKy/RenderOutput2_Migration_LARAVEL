@@ -1,4 +1,4 @@
-<?
+<?php
 
   use app\http\Controllers\Admin\AdminHouseController;
 
