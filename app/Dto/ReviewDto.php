@@ -1,6 +1,6 @@
 <?php
-// app/Dto/ReviewDto.php
-  namespace app\http\Requests;
+
+  namespace app\Dto;
 
   use Illuminate\Foundation\Http\FormRequest;
 
