@@ -1,13 +1,11 @@
 <?php
 
-  namespace App\Http\Requests;
+  namespace app\http\Requests;
 
   use Illuminate\Foundation\Http\FormRequest;
 
-  class HouseRegisterRequest extends FormRequest
-  {
-    public function rules()
-    {
+  class HouseRegisterRequest extends FormRequest{
+    public function rules(){
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
