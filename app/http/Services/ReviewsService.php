@@ -2,63 +2,81 @@
 
   namespace App\Http\Services;
   
-  use App\Models\Review;
-  use Illuminate\Support\Facades\DB;
-  use Illuminate\Support\Str;
-  use Illuminate\Support\Facades\Storage;
+  use Illuminate\Support\Facades\Log;
+  use Illuminate\Support\Facades\Config;
+  use Stripe\Stripe;
+  use Stripe\Checkout\Session as StripeSession;
+  use App\Http\Services\ReservationService;
   
-  class ReviewsService{
-      // 最新レビューの取得
-      public function refreshReviews()    {
-          // キャッシュクリアの概念はEloquentにはあまりないのでそのままallでOK
-          return Review::all();
+  class StripeService{
+      protected $reservationService;
+  
+      // .envまたはconfig/services.php からAPIキーを取得
+      public function __construct(ReservationService $reservationService){
+          $this->reservationService = $reservationService;
+          Stripe::setApiKey(config('services.stripe.secret'));
       }
   
-      // 新規レビュー作成
-      public function create(array $data)    {
-          DB::transaction(function() use ($data) {
-              $review = new Review();
-              
-              if (!empty($data['image'])) {
-                  $originalName = $data['image']->getClientOriginalName();
-                  $hashedName = $this->generateNewFileName($originalName);
-                  // 保存先は 'public/review_img'
-                  $path = $data['image']->storeAs('public/review_img', $hashedName);
-                  $review->image_name = $hashedName;
-              }
-              
-              $review->rating = $data['rating'];
-              $review->review_text = $data['review_text'];
-              $review->user_id = $data['user_id'];
-              $review->house_id = $data['house_id'];
-              $review->save();
-          });
-      }
+      // Stripeセッション作成
+      public function createStripeSession(string $houseName, array $form, string $requestUrl): ?string {
+          try {
+              // リダイレクトURLの生成
+              $successUrl = preg_replace('#/houses/\d+/reservations/confirm#', '', $requestUrl) . '/reservations?reserved';
+              $cancelUrl = str_replace('/reservations/confirm', '', $requestUrl);
   
-      // レビュー編集
-      public function update($id, array $data)    {
-          DB::transaction(function() use ($id, $data) {
-              $review = Review::findOrFail($id);
-  
-              if (!empty($data['image'])) {
-                  $originalName = $data['image']->getClientOriginalName();
-                  $hashedName = $this->generateNewFileName($originalName);
-                  $data['image']->storeAs('public/review_img', $hashedName);
-                  $review->image_name = $hashedName;
-              }
-  
-              $review->rating = $data['rating'];
-              $review->review_text = $data['review_text'];
-              $review->save();
-          });
-      }
-  
-      // UUID付きファイル名生成
-      public function generateNewFileName($fileName)    {
-          $parts = explode('.', $fileName);
-          for ($i = 0; $i < count($parts) - 1; $i++) {
-              $parts[$i] = (string) Str::uuid();
+              // セッション作成
+              $session = StripeSession::create([
+                  'payment_method_types' => ['card'],
+                  'line_items' => [[
+                      'price_data' => [
+                          'currency' => 'jpy',
+                          'product_data' => [
+                              'name' => $houseName,
+                          ],
+                          'unit_amount' => (int)$form['amount'],
+                      ],
+                      'quantity' => 1,
+                  ]],
+                  'mode' => 'payment',
+                  'success_url' => $successUrl,
+                  'cancel_url' => $cancelUrl,
+                  'payment_intent_data' => [
+                      'metadata' => [
+                          'houseId' => $form['house_id'],
+                          'userId' => $form['user_id'],
+                          'checkinDate' => $form['checkin_date'],
+                          'checkoutDate' => $form['checkout_date'],
+                          'numberOfPeople' => $form['number_of_people'],
+                          'amount' => $form['amount'],
+                      ],
+                  ],
+              ]);
+              return $session->id;
+          } catch (\Exception $e) {
+              Log::error('Stripe session作成失敗: ' . $e->getMessage());
+              return null;
           }
-          return implode('.', $parts);
+      }
+  
+      // Webhookで呼ばれる
+      public function processSessionCompleted($event){
+          if (isset($event->data->object)) {
+              $session = $event->data->object;
+              try {
+                  // payment_intentをexpandして取得
+                  $stripeSession = StripeSession::retrieve([
+                      'id' => $session->id,
+                      'expand' => ['payment_intent'],
+                  ]);
+                  $metadata = $stripeSession->payment_intent->metadata ?? [];
+                  $this->reservationService->create($metadata);
+  
+                  Log::info('予約一覧ページの登録処理が成功しました。');
+              } catch (\Exception $e) {
+                  Log::error('予約登録失敗: ' . $e->getMessage());
+              }
+          } else {
+              Log::info('Stripe Eventデータ取得失敗');
+          }
       }
   }
