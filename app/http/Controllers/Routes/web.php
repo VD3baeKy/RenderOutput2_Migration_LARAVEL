@@ -8,15 +8,14 @@
     Route::get('/houses/{id}/reservations/input', [ReservationController::class, 'input'])->name('reservations.input');
     Route::get('/houses/{id}/reservations/confirm', [ReservationController::class, 'confirm'])->name('reservations.confirm');
     // Route::post('/houses/{id}/reservations/create', [ReservationController::class, 'create'])->name('reservations.create');
+    Route::get('/user',        [UserController::class, 'index'])->name('user.index');
+    Route::get('/user/edit',   [UserController::class, 'edit'])->name('user.edit');
+    Route::post('/user/update',[UserController::class, 'update'])->name('user.update');
   });
 
-  // routes/web.php
   Route::post('/stripe/webhook', [StripeWebhookController::class, 'webhook']);
 
-  // routes/web.php
   Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews.index');
-
-  Route::post('/stripe/webhook', [StripeWebhookController::class, 'webhook']);
 
   Route::prefix('admin/houses')->group(function () {
     Route::get('/', [AdminHouseController::class, 'index'])->name('admin.houses.index');
