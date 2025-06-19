@@ -1,11 +1,12 @@
 <?php
 
-  namespace app\Models;
+  namespace App\Models;
 
   use Illuminate\Database\Eloquent\Model;
+  use Illuminate\Database\Eloquent\Builder;
 
   class Role extends Model{
-    // テーブル名（Laravelの規約通りrolesなので省略もできる）
+    // テーブル名（Laravelの規約通りrolesなので省略も可）
     protected $table = 'roles';
 
     // プライマリーキー
@@ -13,7 +14,7 @@
     public $incrementing = true;
     protected $keyType = 'int';
 
-    // タイムスタンプ created_at/updated_at を使わない場合
+    // タイムスタンプを使わない
     public $timestamps = false;
 
     // 一括代入を許可する属性
@@ -21,9 +22,24 @@
         'name',
     ];
 
-    // 必要ならユーザーとのリレーションも追加（例）
+    // ======================
+    // リレーション例（必要に応じて）
     // public function users()
     // {
     //     return $this->hasMany(User::class, 'role_id');
     // }
+
+    // ======================
+    // 「名前で検索」機能の追加
+    // ======================
+
+    // スコープバージョン
+    public function scopeName(Builder $query, $name){
+        return $query->where('name', $name);
+    }
+
+    // 静的メソッドバージョン
+    public static function findByName($name){
+        return static::where('name', $name)->first();
+    }
   }
