@@ -3,6 +3,7 @@
   namespace app\Models;
 
   use Illuminate\Database\Eloquent\Model;
+  use Illuminate\Database\Eloquent\Builder;
 
   class Reservation extends Model{
     // テーブル名
@@ -29,13 +30,13 @@
 
     // 属性の型キャスト
     protected $casts = [
-        'checkin_date' => 'date',
+        'checkin_date'  => 'date',
         'checkout_date' => 'date',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
     ];
 
-    // ------ リレーション --------
+    // ------------ リレーション ------------
 
     // Houseリレーション
     public function house(){
@@ -45,5 +46,17 @@
     // Userリレーション
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // ------------ クエリスコープ ------------
+
+    /**
+     * 指定ユーザの予約一覧を作成日降順（ページネーション用）
+     * 例: Reservation::ofUserOrderByCreatedAtDesc($userId)->paginate(10);
+     */
+    public function scopeOfUserOrderByCreatedAtDesc(Builder $query, $userId){
+        // user_idで絞り、created_at降順
+        return $query->where('user_id', $userId)
+                     ->orderBy('created_at', 'desc');
     }
   }
