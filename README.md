@@ -37,6 +37,8 @@ npm install
 
 npm install laravel-mix --save-dev
 
+composer create-project laravel/laravel project_name
 
-composer create-project laravel/laravel your_project_name
+php artisan serve --host=0.0.0.0 --port=8000
+
 '''
