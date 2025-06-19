@@ -7,7 +7,7 @@
   use Illuminate\Database\Eloquent\Factories\HasFactory;
   use Illuminate\Database\Eloquent\Builder;
 
-  class User extends Authenticatable{
+class User extends Authenticatable{
     use HasFactory, Notifiable;
 
     // テーブル名
@@ -53,14 +53,11 @@
     }
 
     // ========================
-    // UserRepositoryの各メソッドをスコープ等で再現
-
-    // Java: User findByEmail(String email);
+    // UserRepositoryの各メソッド
     public static function findByEmail($email){
         return static::where('email', $email)->first();
     }
 
-    // Java: Page<User> findByNameLikeOrFuriganaLike(String nameKeyword, String furiganaKeyword, Pageable pageable);
     public function scopeNameLikeOrFuriganaLike(Builder $query, $nameKeyword, $furiganaKeyword){
         return $query->where(function($q) use ($nameKeyword, $furiganaKeyword) {
             $q->where('name', 'like', $nameKeyword)
@@ -68,18 +65,55 @@
         });
     }
 
-    // Java: boolean existsById(Integer id);
     public static function existsById($id){
         return static::where('id', $id)->exists();
     }
 
-    // Java: Optional<User> findById(Integer id);
-    // → Laravel: find()またはfirst()
     public static function findById($id){
-        return static::find($id); // 見つからない場合nullを返す（Optional相当）
+        return static::find($id);
     }
 
-    // 必要なら予約やレビュー等のリレーションも追加OK
+    // ========================
+    // UserDetailsImpl的メソッド
+
+    // \Illuminate\Contracts\Auth\Authenticatable で必要（実は getAuthPassword でOKだが Java互換で getPassword も用意）
+    public function getPassword(){
+        return $this->password;
+    }
+
+    // Springでの「ユーザー名」→ここではメールアドレス
+    public function getUsername(){
+        return $this->email;
+    }
+
+    // 権限（ロール名）
+    public function getAuthorities(){
+        // 単一ロールを前提
+        return $this->role ? [$this->role->name] : [];
+    }
+
+    // アカウントが有効（enabledで管理）
+    public function isEnabled(){
+        return (bool)$this->enabled;
+    }
+
+    // アカウント期限切れ・ロック・資格期限切れの判定（デフォルトtrue、将来変えたければ拡張）
+    public function isAccountNonExpired(){
+        return true;
+    }
+    public function isAccountNonLocked(){
+        return true;
+    }
+    public function isCredentialsNonExpired(){
+        return true;
+    }
+
+    public function getUserId(){
+        return $this->id;
+    }
+
+    // ========================
+    // 予約やレビュー等のリレーションも追加OK
     // public function reservations()
     // {
     //     return $this->hasMany(Reservation::class);
