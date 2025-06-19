@@ -18,3 +18,15 @@ php artisan make:request ReviewRegisterFormRequest
 php artisan make:request SignupFormRequest
 php artisan make:request UserEditRequest
 ```
+
+## Spring Boot と Laravel における ```WebSecurityConfig``` の主な対比表
+|Spring Security|Laravel|
+|:---:|---|
+|```.authorizeHttpRequests()```|ルーティング＋ミドルウェア（web.php, Auth, middleware）
+|ロールによるアクセス制御|Middleware(```auth```, カスタム```role```), ```Gate```, ```Policy```|
+|```.formLogin()```|ルートや```LoginController```、設定（```config/auth.php```等）|
+|```.logout()```|ルートや```LogoutController```|
+|```.csrf().ignoringRequestMatchers```|```except```例外（```VerifyCsrfToken```ミドルウェア）|
+|パスワードエンコーダ|Laravelは標準で```bcrypt``` (```Hash```ファサード)| 
+
+
