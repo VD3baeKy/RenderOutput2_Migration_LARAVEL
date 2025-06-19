@@ -14,7 +14,13 @@
     Route::get('/signup', [AuthController::class, 'signup']);
     Route::post('/signup', [AuthController::class, 'postSignup']);
     Route::get('/signup/verify', [AuthController::class, 'verify']);
-  });
+    Route::get('/houses', [HouseController::class, 'index'])->name('houses.index');
+    Route::get('/houses/{id}', [HouseController::class, 'show'])->name('houses.show');
+    Route::post('/houses/{houseId}/review', [ReviewController::class, 'store'])->middleware('auth');
+    Route::post('/houses/{houseId}/review/{reviewId}/edit', [ReviewController::class, 'update'])->middleware('auth');
+    Route::post('/houses/{houseId}/review/{reviewId}/delete', [ReviewController::class, 'destroy'])->middleware('auth');
+    Route::post('/houses/{houseId}/favorite', [FavoriteController::class, 'toggle'])->middleware('auth');
+      });
 }
 
 
