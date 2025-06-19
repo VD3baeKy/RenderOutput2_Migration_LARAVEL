@@ -11,6 +11,9 @@
   });
 
   // routes/web.php
+  Route::post('/stripe/webhook', [StripeWebhookController::class, 'webhook']);
+
+  // routes/web.php
   Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews.index');
 
   Route::post('/stripe/webhook', [StripeWebhookController::class, 'webhook']);
