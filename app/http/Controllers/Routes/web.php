@@ -13,6 +13,8 @@
   // routes/web.php
   Route::get('/reviews', [ReviewsController::class, 'index'])->name('reviews.index');
 
+  Route::post('/stripe/webhook', [StripeWebhookController::class, 'webhook']);
+
   Route::prefix('admin/houses')->group(function () {
     Route::get('/', [AdminHouseController::class, 'index'])->name('admin.houses.index');
     Route::get('/{id}', [AdminHouseController::class, 'show'])->name('admin.houses.show');
