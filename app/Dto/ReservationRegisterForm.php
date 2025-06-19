@@ -10,7 +10,6 @@
     public $numberOfPeople;
     public $amount;
 
-    // コンストラクタで全フィールド初期化
     public function __construct($houseId, $userId, $checkinDate, $checkoutDate, $numberOfPeople, $amount){
         $this->houseId = $houseId;
         $this->userId = $userId;
