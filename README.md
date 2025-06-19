@@ -29,4 +29,14 @@ php artisan make:request UserEditRequest
 |```.csrf().ignoringRequestMatchers```|```except```例外（```VerifyCsrfToken```ミドルウェア）|
 |パスワードエンコーダ|Laravelは標準で```bcrypt``` (```Hash```ファサード)| 
 
+---
 
+'''
+npm init -y
+npm install
+
+npm install laravel-mix --save-dev
+
+
+composer create-project laravel/laravel your_project_name
+'''
