@@ -6,7 +6,7 @@
   use Illuminate\Database\Eloquent\Builder;
 
   class Role extends Model{
-    // テーブル名（Laravelの規約通りrolesなので省略も可）
+    // テーブル名（Laravelの規約通りrolesなので省略可）
     protected $table = 'roles';
 
     // プライマリーキー
@@ -23,15 +23,19 @@
     ];
 
     // ======================
-    // リレーション例（必要に応じて）
-    // public function users()
-    // {
-    //     return $this->hasMany(User::class, 'role_id');
-    // }
+    // リレーション: 紐づくUser一覧を取得
+    public function users(){
+        return $this->hasMany(User::class, 'role_id');
+    }
+
+    // ======================
+    // 「自分のロール名を返す」ゲッターメソッド
+    public function getRoleName(){
+        return $this->name;
+    }
 
     // ======================
     // 「名前で検索」機能の追加
-    // ======================
 
     // スコープバージョン
     public function scopeName(Builder $query, $name){
@@ -42,4 +46,4 @@
     public static function findByName($name){
         return static::where('name', $name)->first();
     }
-  }
+}
