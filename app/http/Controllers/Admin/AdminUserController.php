@@ -1,9 +1,9 @@
 <?php
 
-    namespace App\Http\Controllers\Admin;
+    namespace app\http\Controllers\Admin;
 
-    use App\Http\Controllers\Controller;
-    use App\Models\User;
+    use app\http\Controllers\Controller;
+    use app\Models\User;
     use Illuminate\Http\Request;
     use Illuminate\Pagination\Paginator;
 
