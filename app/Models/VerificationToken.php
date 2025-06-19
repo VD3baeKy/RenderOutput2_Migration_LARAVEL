@@ -1,6 +1,6 @@
 <?php
 
-  namespace app\Models;
+  namespace App\Models;
 
   use Illuminate\Database\Eloquent\Model;
 
@@ -28,8 +28,20 @@
         'updated_at' => 'datetime',
     ];
 
-    // リレーション：ユーザー（OneToOneとほぼ同じ, belongsTo でOK）
+    // リレーション：ユーザー
     public function user(){
         return $this->belongsTo(User::class, 'user_id');
     }
-}
+
+    // ================================
+    // トークンで検索（findByToken相当）
+    // ================================
+    public static function findByToken($token){
+        return static::where('token', $token)->first();
+    }
+
+    // スコープ形式も使いたい場合
+    public function scopeToken($query, $token){
+        return $query->where('token', $token);
+    }
+  }
