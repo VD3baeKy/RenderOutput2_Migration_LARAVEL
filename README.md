@@ -29,6 +29,10 @@ php artisan make:request UserEditRequest
 |```.csrf().ignoringRequestMatchers```|```except```例外（```VerifyCsrfToken```ミドルウェア）|
 |パスワードエンコーダ|Laravelは標準で```bcrypt``` (```Hash```ファサード)| 
 
+## Middleware
+* Laravel 11では、```app/Http/Kernel.php```ファイルが完全に廃止。
+* Middlewareの設定は、```bootstrap/app.php```ファイルで行うようになった。
+* ```bootstrap/app.php```ファイルを使用して、グローバルMiddlewareの登録やMiddlewareグループの定義を行う。
 ---
 
 '''
