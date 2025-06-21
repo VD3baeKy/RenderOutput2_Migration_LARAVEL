@@ -35,7 +35,7 @@ php artisan make:request UserEditRequest
 * ```bootstrap/app.php```ファイルを使用して、グローバルMiddlewareの登録やMiddlewareグループの定義を行う。
 ---
 
-'''
+```
 npm init -y
 npm install
 
