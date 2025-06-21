@@ -45,4 +45,4 @@ composer create-project laravel/laravel project_name
 
 php artisan serve --host=0.0.0.0 --port=8000
 
-'''
+```
