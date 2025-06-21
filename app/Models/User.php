@@ -134,6 +134,8 @@
         return $this->id === -1;
     }
 
+
+
     // ========================
     // 必要なら予約やレビュー等のリレーション追加もここにOK
     // public function reservations()

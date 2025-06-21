@@ -1,4 +1,10 @@
 <?php
-  'stripe' => [
-      'key' => env('STRIPE_API_KEY', ''),
-  ],
+
+return [
+
+    'stripe' => [
+        'key' => env('', ''),
+    ],
+
+];
+
