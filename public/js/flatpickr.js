@@ -5,5 +5,6 @@ flatpickr('#fromCheckinDateToCheckoutDate', {
   mode: "range",
   locale: 'ja',
   minDate: 'today',
+  minDate: "today",
   maxDate: maxDate
 });
